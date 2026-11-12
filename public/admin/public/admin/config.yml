@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: arnegif/UKIAMKA-dosc
+  repo: arne-design/UKIAMKA-docs
   branch: main
 
 publish_mode: editorial_workflow
