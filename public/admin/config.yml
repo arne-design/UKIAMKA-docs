@@ -2,6 +2,7 @@ backend:
   name: github
   repo: arne-design/UKIAMKA-docs
   branch: main
+  auth_endpoint: api/auth
 
 publish_mode: editorial_workflow
 
