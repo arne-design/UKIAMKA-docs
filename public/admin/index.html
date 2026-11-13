@@ -5,6 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
     <title>UKIAMKA digital documents Library – Admin</title>
+    <style>
+      /* Center and enlarge the display_url title in Decap CMS top bar */
+      header a[href="https://ukiamka-docs.pages.dev"] {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 1.25rem !important;
+        font-weight: 700 !important;
+        color: #1e3a8a !important;
+        text-decoration: none !important;
+        white-space: nowrap;
+        pointer-events: auto;
+      }
+      header a[href="https://ukiamka-docs.pages.dev"]:hover {
+        text-decoration: underline !important;
+      }
+      /* Hide on small mobile screens so it doesn't overlap buttons */
+      @media (max-width: 768px) {
+        header a[href="https://ukiamka-docs.pages.dev"] {
+          position: static;
+          transform: none;
+          font-size: 0.95rem !important;
+        }
+      }
+    </style>
   </head>
   <body>
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
