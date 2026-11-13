@@ -8,42 +8,45 @@
     <style>
       /* Kompakt layout for skjemafeltene i Decap CMS */
       [class*="ControlContainer"] {
-        margin-top: 12px !important;
+        margin-top: 10px !important;
       }
 
-      /* Gjør input-felt og nedtrekkslister lavere og nettere */
+      /* Gjør tekstfelt og nedtrekkslister (inkl. Language og Category) slankere */
       #nc-root input[type="text"],
       #nc-root select,
       [class*="Select-control"],
-      [class*="DropdownList"] {
-        min-height: 35px !important;
-        height: 35px !important;
-        padding: 4px 10px !important;
-        font-size: 0.7rem !important;
+      [class*="DropdownList"],
+      [class*="ControlContainer"] > div[role="button"],
+      [class*="ControlContainer"] > select {
+        min-height: 36px !important;
+        height: 36px !important;
+        padding-top: 4px !important;
+        padding-bottom: 4px !important;
+        font-size: 0.9rem !important;
       }
 
       /* Reduser høyden på tekstboksen (Short Summary) */
       #nc-root textarea {
-        min-height: 35px !important;
-        height: 35px !important;
+        min-height: 70px !important;
+        height: 70px !important;
         padding: 8px 10px !important;
-        font-size: 0.7rem !important;
+        font-size: 0.9rem !important;
       }
 
-      /* Gjør etikettene (TITLE, LANGUAGE osv.) litt nettere */
+      /* Gjør etikettene (TITLE, LANGUAGE osv.) nettere */
       [class*="FieldLabel"] {
         font-size: 0.7rem !important;
         padding: 2px 6px !important;
       }
 
-      /* Stram inn filopplastingsboksene (Manual PDF / Audio) */
+      /* Stram inn filopplastingsboksene */
       [class*="FileWidget"] {
         padding: 8px 12px !important;
         min-height: auto !important;
       }
       [class*="FileWidget"] button {
         padding: 4px 10px !important;
-        font-size: 0.7rem !important;
+        font-size: 0.85rem !important;
         margin-bottom: 4px !important;
       }
     </style>
@@ -51,9 +54,11 @@
   <body>
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
     <script>
-      // Behold den store, fete overskriften i toppmenyen
       setInterval(() => {
+        // Sjekk om vi er inne i editoren (der Save/Publish-knappene vises)
+        const isEditing = window.location.hash.includes('/entries/') || window.location.hash.includes('/new');
         const links = document.querySelectorAll('a, span, button');
+
         links.forEach((el) => {
           if (
             el.children.length === 0 &&
@@ -61,19 +66,27 @@
             el.textContent.includes('UKIAMKA')
           ) {
             const target = el.closest('a') || el;
-            target.style.setProperty('position', 'fixed', 'important');
-            target.style.setProperty('top', '10px', 'important');
-            target.style.setProperty('left', '50%', 'important');
-            target.style.setProperty('transform', 'translateX(-50%)', 'important');
-            target.style.setProperty('font-size', '1.40rem', 'important');
-            target.style.setProperty('font-weight', '800', 'important');
-            target.style.setProperty('letter-spacing', '0.02em', 'important');
-            target.style.setProperty('color', '#1e3a8a', 'important');
-            target.style.setProperty('white-space', 'nowrap', 'important');
-            target.style.setProperty('z-index', '9999', 'important');
+
+            if (isEditing) {
+              // Skjul overskriften i editoren så Save, Status, Publish og Delete aldri dekkes til
+              target.style.setProperty('display', 'none', 'important');
+            } else {
+              // Vis overskriften stort og tydelig på hovedsiden
+              target.style.setProperty('display', 'inline-block', 'important');
+              target.style.setProperty('position', 'fixed', 'important');
+              target.style.setProperty('top', '10px', 'important');
+              target.style.setProperty('left', '50%', 'important');
+              target.style.setProperty('transform', 'translateX(-50%)', 'important');
+              target.style.setProperty('font-size', '1.40rem', 'important');
+              target.style.setProperty('font-weight', '800', 'important');
+              target.style.setProperty('letter-spacing', '0.02em', 'important');
+              target.style.setProperty('color', '#1e3a8a', 'important');
+              target.style.setProperty('white-space', 'nowrap', 'important');
+              target.style.setProperty('z-index', '9999', 'important');
+            }
           }
         });
-      }, 300);
+      }, 250);
     </script>
   </body>
 </html>
