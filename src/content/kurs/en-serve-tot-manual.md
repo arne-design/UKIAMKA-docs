@@ -1,6 +1,6 @@
 ---
 title: SERVE TOT Manual
-language: en
+language: EN
 category: Pastorer og eldste
 description: SERVE TOT manual in English
 pdf_file: /filer/serve-trainers-manual-v2-english-.pdf
