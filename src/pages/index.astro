@@ -4,6 +4,12 @@ const allCourses = Object.values(courseModules);
 const courses = allCourses.sort((a: any, b: any) => 
   new Date(b.frontmatter?.date || 0).getTime() - new Date(a.frontmatter?.date || 0).getTime()
 );
+
+const langNames: Record<string, string> = {
+  en: 'Engelsk',
+  sw: 'Swahili',
+  fr: 'Fransk',
+};
 ---
 
 <!DOCTYPE html>
@@ -28,10 +34,12 @@ const courses = allCourses.sort((a: any, b: any) =>
     .badge-offline { background: #dcfce7; color: #166534; padding: 0.2rem 0.6rem; border-radius: 99px; font-weight: 600; font-size: 0.75rem; }
     .grid { display: grid; gap: 1rem; }
     .card { background: var(--card); border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
-    .meta { display: flex; gap: 0.5rem; font-size: 0.8rem; color: var(--primary); font-weight: 600; margin-bottom: 0.4rem; text-transform: uppercase; }
+    .meta { display: flex; gap: 0.5rem; font-size: 0.8rem; color: var(--primary); font-weight: 600; margin-bottom: 0.4rem; text-transform: uppercase; flex-wrap: wrap; }
     .card h2 { font-size: 1.2rem; margin-bottom: 0.5rem; }
     .card p { color: var(--muted); font-size: 0.95rem; margin-bottom: 1rem; }
-    .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    .audio-box { margin-bottom: 1rem; }
+    .audio-box audio { width: 100%; height: 40px; }
+    .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
     .btn { display: inline-block; background: var(--primary); color: white; text-decoration: none; padding: 0.6rem 1rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; }
     .btn-secondary { background: #e2e8f0; color: var(--text); }
     .empty { text-align: center; padding: 3rem 1rem; color: var(--muted); background: white; border-radius: 12px; border: 1px dashed #cbd5e1; }
@@ -48,16 +56,22 @@ const courses = allCourses.sort((a: any, b: any) =>
       <input type="search" id="searchInput" placeholder="Søk etter kurs eller tema..." />
       <select id="langFilter">
         <option value="all">Alle språk</option>
-        <option value="Swahili">Swahili</option>
-        <option value="Engelsk">Engelsk</option>
-        <option value="Fransk">Fransk</option>
-        <option value="Norsk">Norsk</option>
+        <option value="en">Engelsk</option>
+        <option value="sw">Swahili</option>
+        <option value="fr">Fransk</option>
+      </select>
+      <select id="catFilter">
+        <option value="all">Alle kategorier</option>
+        <option value="Pastorer og eldste">Pastorer og eldste</option>
+        <option value="Ungdomsledere">Ungdomsledere</option>
+        <option value="Søndagsskole">Søndagsskole</option>
+        <option value="Menighetsplanting">Menighetsplanting</option>
       </select>
     </div>
 
     <div class="status-bar">
       <span id="countText">Viser {courses.length} kurs</span>
-      <span class="badge-offline" id="netStatus">Klar for offline bruk</span>
+      <span class="badge-offline">Klar for offline bruk</span>
     </div>
 
     {courses.length === 0 ? (
@@ -67,20 +81,47 @@ const courses = allCourses.sort((a: any, b: any) =>
       </div>
     ) : (
       <div class="grid" id="courseList">
-        {courses.map((course) => {
-          const { title, language, category, description, pdf } = course.frontmatter;
+        {courses.map((course: any) => {
+          const fm = course.frontmatter || {};
+          const pdfUrl = (fm.pdf_file || '').replace(/^\/?public/, '');
+          const audioUrl = (fm.audio_file || '').replace(/^\/?public/, '');
+          const langLabel = langNames[fm.language] || fm.language;
+
           return (
-            <article class="card" data-title={(title || '').toLowerCase()} data-lang={language || ''}>
+            <article 
+              class="card" 
+              data-title={(fm.title || '').toLowerCase()} 
+              data-lang={fm.language || ''}
+              data-cat={fm.category || ''}
+            >
               <div class="meta">
-                {language && <span>{language}</span>}
-                {category && <span>• {category}</span>}
+                {langLabel && <span>{langLabel}</span>}
+                {fm.category && <span>• {fm.category}</span>}
+                {fm.file_size && <span>• {fm.file_size}</span>}
               </div>
-              <h2>{title}</h2>
-              {description && <p>{description}</p>}
+              <h2>{fm.title}</h2>
+              {fm.description && <p>{fm.description}</p>}
+
+              {audioUrl && (
+                <div class="audio-box">
+                  <audio controls preload="none" src={audioUrl}></audio>
+                </div>
+              )}
+
               <div class="actions">
-                {pdf && (
-                  <a href={pdf} class="btn" download>
-                    Last ned PDF (Offline)
+                {pdfUrl && (
+                  <>
+                    <a href={pdfUrl} class="btn" target="_blank" rel="noopener">
+                      Les PDF
+                    </a>
+                    <a href={pdfUrl} class="btn btn-secondary" download>
+                      Last ned PDF {fm.file_size ? `(${fm.file_size})` : ''}
+                    </a>
+                  </>
+                )}
+                {audioUrl && (
+                  <a href={audioUrl} class="btn btn-secondary" download>
+                    Last ned lyd (MP3)
                   </a>
                 )}
               </div>
@@ -96,20 +137,23 @@ const courses = allCourses.sort((a: any, b: any) =>
       navigator.serviceWorker.register('/sw.js');
     }
 
-    const searchInput = document.getElementById('searchInput');
-    const langFilter = document.getElementById('langFilter');
-    const cards = document.querySelectorAll('.card');
+    const searchInput = document.getElementById('searchInput') as HTMLInputElement;
+    const langFilter = document.getElementById('langFilter') as HTMLSelectElement;
+    const catFilter = document.getElementById('catFilter') as HTMLSelectElement;
+    const cards = document.querySelectorAll('.card') as NodeListOf<HTMLElement>;
     const countText = document.getElementById('countText');
 
     function filterCourses() {
-      const query = searchInput.value.toLowerCase();
-      const lang = langFilter.value;
+      const query = (searchInput?.value || '').toLowerCase();
+      const lang = langFilter?.value || 'all';
+      const cat = catFilter?.value || 'all';
       let visible = 0;
 
       cards.forEach((card) => {
-        const matchesText = card.dataset.title.includes(query);
+        const matchesText = (card.dataset.title || '').includes(query);
         const matchesLang = lang === 'all' || card.dataset.lang === lang;
-        if (matchesText && matchesLang) {
+        const matchesCat = cat === 'all' || card.dataset.cat === cat;
+        if (matchesText && matchesLang && matchesCat) {
           card.style.display = 'block';
           visible++;
         } else {
@@ -121,6 +165,7 @@ const courses = allCourses.sort((a: any, b: any) =>
 
     searchInput?.addEventListener('input', filterCourses);
     langFilter?.addEventListener('change', filterCourses);
+    catFilter?.addEventListener('change', filterCourses);
   </script>
 </body>
 </html>
