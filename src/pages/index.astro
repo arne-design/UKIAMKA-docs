@@ -1,5 +1,5 @@
 ---
-const courseModules = import.meta.glob('../../src/content/kurs/*.md', { eager: true });
+const courseModules = import.meta.glob('../../src/content/courses/*.md', { eager: true });
 const allCourses = Object.values(courseModules);
 const courses = allCourses.sort((a: any, b: any) => 
   new Date(b.frontmatter?.date || 0).getTime() - new Date(a.frontmatter?.date || 0).getTime()
@@ -34,20 +34,69 @@ const catNames: Record<string, string> = {
     header { background: var(--primary); color: white; padding: 1.5rem 1rem; text-align: center; }
     header h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
     header p { font-size: 0.9rem; opacity: 0.9; }
-    .container { max-width: 800px; margin: 0 auto; padding: 1rem; }
+    .container { max-width: 960px; margin: 0 auto; padding: 1rem; }
     .controls { display: flex; gap: 0.5rem; margin: 1rem 0; flex-wrap: wrap; }
     input, select { padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; flex: 1; min-width: 140px; background: white; }
-    .status-bar { font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
+    
+    .status-bar { font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+    .status-right { display: flex; align-items: center; gap: 0.75rem; }
     .badge-offline { background: #dcfce7; color: #166534; padding: 0.2rem 0.6rem; border-radius: 99px; font-weight: 600; font-size: 0.75rem; }
-    .grid { display: grid; gap: 1rem; }
-    .card { background: var(--card); border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
-    .meta { display: flex; gap: 0.5rem; font-size: 0.8rem; color: var(--primary); font-weight: 600; margin-bottom: 0.4rem; text-transform: uppercase; flex-wrap: wrap; }
+
+    /* View Switcher */
+    .view-toggle { display: inline-flex; background: #e2e8f0; border-radius: 8px; padding: 2px; }
+    .view-btn { border: none; background: transparent; padding: 0.35rem 0.65rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; color: var(--muted); display: flex; align-items: center; gap: 0.3rem; transition: all 0.15s; }
+    .view-btn.active { background: white; color: var(--primary); box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+
+    /* TILE VIEW (Default Grid) */
+    .course-container.tile-view {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .course-container.tile-view .card {
+      background: var(--card);
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* LIST VIEW */
+    .course-container.list-view {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    .course-container.list-view .card {
+      background: var(--card);
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 0.9rem 1.25rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .course-container.list-view .card-body { flex: 1; min-width: 220px; }
+    .course-container.list-view .card h2 { font-size: 1.05rem; margin-bottom: 0.2rem; }
+    .course-container.list-view .card p { margin-bottom: 0; font-size: 0.88rem; }
+    .course-container.list-view .audio-box { margin-top: 0.5rem; margin-bottom: 0; max-width: 320px; }
+    .course-container.list-view .actions { flex-shrink: 0; }
+
+    /* Shared Card Styles */
+    .meta { display: flex; gap: 0.5rem; font-size: 0.78rem; color: var(--primary); font-weight: 600; margin-bottom: 0.35rem; text-transform: uppercase; flex-wrap: wrap; }
     .card h2 { font-size: 1.2rem; margin-bottom: 0.5rem; }
     .card p { color: var(--muted); font-size: 0.95rem; margin-bottom: 1rem; }
     .audio-box { margin-bottom: 1rem; }
-    .audio-box audio { width: 100%; height: 40px; }
-    .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
-    .btn { display: inline-block; background: var(--primary); color: white; text-decoration: none; padding: 0.6rem 1rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; }
+    .audio-box audio { width: 100%; height: 36px; }
+    .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+    .btn { display: inline-block; background: var(--primary); color: white; text-decoration: none; padding: 0.55rem 0.9rem; border-radius: 8px; font-weight: 600; font-size: 0.85rem; white-space: nowrap; }
     .btn-secondary { background: #e2e8f0; color: var(--text); }
     .empty { text-align: center; padding: 3rem 1rem; color: var(--muted); background: white; border-radius: 12px; border: 1px dashed #cbd5e1; }
   </style>
@@ -78,7 +127,19 @@ const catNames: Record<string, string> = {
 
     <div class="status-bar">
       <span id="countText">Showing {courses.length} {courses.length === 1 ? 'course' : 'courses'}</span>
-      <span class="badge-offline">Ready for offline use</span>
+      <div class="status-right">
+        <span class="badge-offline">Ready for offline use</span>
+        <div class="view-toggle" role="group" aria-label="Layout view">
+          <button type="button" class="view-btn active" id="tileViewBtn" title="Tile view">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zm8 0A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm-8 8A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm8 0A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z"/></svg>
+            Tiles
+          </button>
+          <button type="button" class="view-btn" id="listViewBtn" title="List view">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>
+            List
+          </button>
+        </div>
+      </div>
     </div>
 
     {courses.length === 0 ? (
@@ -87,7 +148,7 @@ const catNames: Record<string, string> = {
         <p style="margin-top: 0.5rem;">Log in at <strong>/admin/</strong> to add the first course.</p>
       </div>
     ) : (
-      <div class="grid" id="courseList">
+      <div class="course-container tile-view" id="courseList">
         {courses.map((course: any) => {
           const fm = course.frontmatter || {};
           const pdfUrl = (fm.pdf_file || '').replace(/^\/?public/, '');
@@ -102,19 +163,21 @@ const catNames: Record<string, string> = {
               data-lang={fm.language || ''}
               data-cat={fm.category || ''}
             >
-              <div class="meta">
-                {langLabel && <span>{langLabel}</span>}
-                {catLabel && <span>• {catLabel}</span>}
-                {fm.file_size && <span>• {fm.file_size}</span>}
-              </div>
-              <h2>{fm.title}</h2>
-              {fm.description && <p>{fm.description}</p>}
-
-              {audioUrl && (
-                <div class="audio-box">
-                  <audio controls preload="none" src={audioUrl}></audio>
+              <div class="card-body">
+                <div class="meta">
+                  {langLabel && <span>{langLabel}</span>}
+                  {catLabel && <span>• {catLabel}</span>}
+                  {fm.file_size && <span>• {fm.file_size}</span>}
                 </div>
-              )}
+                <h2>{fm.title}</h2>
+                {fm.description && <p>{fm.description}</p>}
+
+                {audioUrl && (
+                  <div class="audio-box">
+                    <audio controls preload="none" src={audioUrl}></audio>
+                  </div>
+                )}
+              </div>
 
               <div class="actions">
                 {pdfUrl && (
@@ -123,13 +186,13 @@ const catNames: Record<string, string> = {
                       Read PDF
                     </a>
                     <a href={pdfUrl} class="btn btn-secondary" download>
-                      Download PDF {fm.file_size ? `(${fm.file_size})` : ''}
+                      Download {fm.file_size ? `(${fm.file_size})` : 'PDF'}
                     </a>
                   </>
                 )}
                 {audioUrl && (
                   <a href={audioUrl} class="btn btn-secondary" download>
-                    Download Audio (MP3)
+                    MP3
                   </a>
                 )}
               </div>
@@ -145,6 +208,34 @@ const catNames: Record<string, string> = {
       navigator.serviceWorker.register('/sw.js');
     }
 
+    // View Toggle Logic
+    const courseList = document.getElementById('courseList');
+    const tileViewBtn = document.getElementById('tileViewBtn');
+    const listViewBtn = document.getElementById('listViewBtn');
+
+    function setView(view: 'tile' | 'list') {
+      if (!courseList) return;
+      if (view === 'list') {
+        courseList.classList.remove('tile-view');
+        courseList.classList.add('list-view');
+        listViewBtn?.classList.add('active');
+        tileViewBtn?.classList.remove('active');
+      } else {
+        courseList.classList.remove('list-view');
+        courseList.classList.add('tile-view');
+        tileViewBtn?.classList.add('active');
+        listViewBtn?.classList.remove('active');
+      }
+      localStorage.setItem('ukiamka_view', view);
+    }
+
+    const savedView = localStorage.getItem('ukiamka_view');
+    if (savedView === 'list') setView('list');
+
+    tileViewBtn?.addEventListener('click', () => setView('tile'));
+    listViewBtn?.addEventListener('click', () => setView('list'));
+
+    // Filter Logic
     const searchInput = document.getElementById('searchInput') as HTMLInputElement;
     const langFilter = document.getElementById('langFilter') as HTMLSelectElement;
     const catFilter = document.getElementById('catFilter') as HTMLSelectElement;
@@ -162,7 +253,7 @@ const catNames: Record<string, string> = {
         const matchesLang = lang === 'all' || card.dataset.lang === lang;
         const matchesCat = cat === 'all' || card.dataset.cat === cat;
         if (matchesText && matchesLang && matchesCat) {
-          card.style.display = 'block';
+          card.style.display = '';
           visible++;
         } else {
           card.style.display = 'none';
