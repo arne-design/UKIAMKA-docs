@@ -1,5 +1,5 @@
 ---
-title: SERVER TOT Manual
+title: SERVER TOT Manual, Swahili
 language: sw
 category: Pastorer og eldste
 description: First version of SERVE for TOT
