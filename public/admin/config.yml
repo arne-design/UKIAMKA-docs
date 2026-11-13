@@ -20,6 +20,8 @@ collections:
     folder: "src/content/kurs"
     create: true
     slug: "{{language}}-{{slug}}"
+    summary: "{{title}} ({{category}}, {{language}})"
+    sortable_fields: ['title', 'category', 'language', 'date']
     fields:
       - { label: "Title", name: "title", widget: "string", required: true }
       - label: "Language"
