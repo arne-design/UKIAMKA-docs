@@ -6,27 +6,44 @@
     <meta name="robots" content="noindex" />
     <title>UKIAMKA digital documents Library – Admin</title>
     <style>
-      /* Center and enlarge the display_url title in Decap CMS top bar */
-      header a[href="https://ukiamka-docs.pages.dev"] {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 1.25rem !important;
-        font-weight: 700 !important;
-        color: #1e3a8a !important;
-        text-decoration: none !important;
-        white-space: nowrap;
-        pointer-events: auto;
+      /* Style the top navigation bar background */
+      #nc-root header,
+      [class*="AppHeader"] {
+        background-color: #1e3a8a !important;
       }
-      header a[href="https://ukiamka-docs.pages.dev"]:hover {
+
+      /* Make top bar icons and text light so they contrast with the blue background */
+      #nc-root header button,
+      #nc-root header a,
+      [class*="AppHeader"] button,
+      [class*="AppHeader"] a {
+        color: #ffffff !important;
+      }
+
+      /* Center and enlarge the main library title link */
+      a[href*="ukiamka-docs.pages.dev"] {
+        position: fixed !important;
+        top: 12px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        font-size: 1.35rem !important;
+        font-weight: 700 !important;
+        color: #ffffff !important;
+        text-decoration: none !important;
+        white-space: nowrap !important;
+        z-index: 9999 !important;
+      }
+
+      a[href*="ukiamka-docs.pages.dev"]:hover {
         text-decoration: underline !important;
       }
-      /* Hide on small mobile screens so it doesn't overlap buttons */
-      @media (max-width: 768px) {
-        header a[href="https://ukiamka-docs.pages.dev"] {
-          position: static;
-          transform: none;
-          font-size: 0.95rem !important;
+
+      /* Adjust for smaller screens so it never overlaps the Save button */
+      @media (max-width: 900px) {
+        a[href*="ukiamka-docs.pages.dev"] {
+          position: static !important;
+          transform: none !important;
+          font-size: 1rem !important;
         }
       }
     </style>
