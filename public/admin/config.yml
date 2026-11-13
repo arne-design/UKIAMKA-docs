@@ -1,3 +1,6 @@
+site_url: https://ukiamka-docs.pages.dev
+display_url: "UKIAMKA digital documents Library - ADMIN (← Back to archive)"
+logo_url: /icon.svg
 backend:
   name: github
   repo: arne-design/UKIAMKA-docs
