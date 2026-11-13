@@ -1,0 +1,125 @@
+---
+const allCourses = await Astro.glob('../../src/content/courses/*.md').catch(() => []);
+const courses = allCourses.sort((a, b) => 
+  new Date(b.frontmatter.date || 0).getTime() - new Date(a.frontmatter.date || 0).getTime()
+);
+---
+
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UKIAMKA – Kurs- og undervisningsarkiv</title>
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#1e3a8a" />
+  <style>
+    :root { --primary: #1e3a8a; --bg: #f8fafc; --card: #ffffff; --text: #0f172a; --muted: #475569; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; padding-bottom: 3rem; }
+    header { background: var(--primary); color: white; padding: 1.5rem 1rem; text-align: center; }
+    header h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+    header p { font-size: 0.9rem; opacity: 0.9; }
+    .container { max-width: 800px; margin: 0 auto; padding: 1rem; }
+    .controls { display: flex; gap: 0.5rem; margin: 1rem 0; flex-wrap: wrap; }
+    input, select { padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; flex: 1; min-width: 140px; background: white; }
+    .status-bar { font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
+    .badge-offline { background: #dcfce7; color: #166534; padding: 0.2rem 0.6rem; border-radius: 99px; font-weight: 600; font-size: 0.75rem; }
+    .grid { display: grid; gap: 1rem; }
+    .card { background: var(--card); border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+    .meta { display: flex; gap: 0.5rem; font-size: 0.8rem; color: var(--primary); font-weight: 600; margin-bottom: 0.4rem; text-transform: uppercase; }
+    .card h2 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+    .card p { color: var(--muted); font-size: 0.95rem; margin-bottom: 1rem; }
+    .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    .btn { display: inline-block; background: var(--primary); color: white; text-decoration: none; padding: 0.6rem 1rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; }
+    .btn-secondary { background: #e2e8f0; color: var(--text); }
+    .empty { text-align: center; padding: 3rem 1rem; color: var(--muted); background: white; border-radius: 12px; border: 1px dashed #cbd5e1; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>UKIAMKA Kursarkiv</h1>
+    <p>Undervisningsmateriell tilgjengelig også uten internett</p>
+  </header>
+
+  <main class="container">
+    <div class="controls">
+      <input type="search" id="searchInput" placeholder="Søk etter kurs eller tema..." />
+      <select id="langFilter">
+        <option value="all">Alle språk</option>
+        <option value="Swahili">Swahili</option>
+        <option value="Engelsk">Engelsk</option>
+        <option value="Fransk">Fransk</option>
+        <option value="Norsk">Norsk</option>
+      </select>
+    </div>
+
+    <div class="status-bar">
+      <span id="countText">Viser {courses.length} kurs</span>
+      <span class="badge-offline" id="netStatus">Klar for offline bruk</span>
+    </div>
+
+    {courses.length === 0 ? (
+      <div class="empty">
+        <h3>Ingen kurs er publisert ennå</h3>
+        <p style="margin-top: 0.5rem;">Logg inn på <strong>/admin/</strong> for å legge til det første kurset.</p>
+      </div>
+    ) : (
+      <div class="grid" id="courseList">
+        {courses.map((course) => {
+          const { title, language, category, description, pdf } = course.frontmatter;
+          return (
+            <article class="card" data-title={(title || '').toLowerCase()} data-lang={language || ''}>
+              <div class="meta">
+                {language && <span>{language}</span>}
+                {category && <span>• {category}</span>}
+              </div>
+              <h2>{title}</h2>
+              {description && <p>{description}</p>}
+              <div class="actions">
+                {pdf && (
+                  <a href={pdf} class="btn" download>
+                    Last ned PDF (Offline)
+                  </a>
+                )}
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    )}
+  </main>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+
+    const searchInput = document.getElementById('searchInput');
+    const langFilter = document.getElementById('langFilter');
+    const cards = document.querySelectorAll('.card');
+    const countText = document.getElementById('countText');
+
+    function filterCourses() {
+      const query = searchInput.value.toLowerCase();
+      const lang = langFilter.value;
+      let visible = 0;
+
+      cards.forEach((card) => {
+        const matchesText = card.dataset.title.includes(query);
+        const matchesLang = lang === 'all' || card.dataset.lang === lang;
+        if (matchesText && matchesLang) {
+          card.style.display = 'block';
+          visible++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+      if (countText) countText.textContent = `Viser ${visible} kurs`;
+    }
+
+    searchInput?.addEventListener('input', filterCourses);
+    langFilter?.addEventListener('change', filterCourses);
+  </script>
+</body>
+</html>
