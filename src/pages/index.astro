@@ -1,7 +1,8 @@
 ---
-const allCourses = await Astro.glob('../../src/content/courses/*.md').catch(() => []);
-const courses = allCourses.sort((a, b) => 
-  new Date(b.frontmatter.date || 0).getTime() - new Date(a.frontmatter.date || 0).getTime()
+const courseModules = import.meta.glob('../../src/content/courses/*.md', { eager: true });
+const allCourses = Object.values(courseModules);
+const courses = allCourses.sort((a: any, b: any) => 
+  new Date(b.frontmatter?.date || 0).getTime() - new Date(a.frontmatter?.date || 0).getTime()
 );
 ---
 
