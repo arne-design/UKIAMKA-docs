@@ -1,3 +1,10 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>UKIAMKA digital documents Library – Admin</title>
     <style>
       /* Kompakt layout for skjemafeltene i Decap CMS */
       [class*="ControlContainer"] {
@@ -40,3 +47,43 @@
         margin-bottom: 4px !important;
       }
     </style>
+  </head>
+  <body>
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <script>
+      setInterval(() => {
+        // Sjekk om vi er inne i editoren (der Save/Publish-knappene vises)
+        const isEditing = window.location.hash.includes('/entries/') || window.location.hash.includes('/new');
+        const links = document.querySelectorAll('a, span, button');
+
+        links.forEach((el) => {
+          if (
+            el.children.length === 0 &&
+            el.textContent &&
+            el.textContent.includes('UKIAMKA')
+          ) {
+            const target = el.closest('a') || el;
+
+            if (isEditing) {
+              // Skjul overskriften i editoren så Save, Status, Publish og Delete aldri dekkes til
+              target.style.setProperty('display', 'none', 'important');
+            } else {
+              // Vis overskriften stort og tydelig på hovedsiden
+              target.style.setProperty('display', 'inline-block', 'important');
+              target.style.setProperty('position', 'fixed', 'important');
+              target.style.setProperty('top', '10px', 'important');
+              target.style.setProperty('left', '50%', 'important');
+              target.style.setProperty('transform', 'translateX(-50%)', 'important');
+              target.style.setProperty('font-size', '1.40rem', 'important');
+              target.style.setProperty('font-weight', '800', 'important');
+              target.style.setProperty('letter-spacing', '0.02em', 'important');
+              target.style.setProperty('color', '#1e3a8a', 'important');
+              target.style.setProperty('white-space', 'nowrap', 'important');
+              target.style.setProperty('z-index', '9999', 'important');
+            }
+          }
+        });
+      }, 250);
+    </script>
+  </body>
+</html>
