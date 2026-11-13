@@ -4,12 +4,54 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
-    <title>UKIAMKA Digital documents Library – Admin</title>
+    <title>UKIAMKA digital documents Library – Admin</title>
+    <style>
+      /* Kompakt layout for skjemafeltene i Decap CMS */
+      [class*="ControlContainer"] {
+        margin-top: 12px !important;
+      }
+
+      /* Gjør input-felt og nedtrekkslister lavere og nettere */
+      #nc-root input[type="text"],
+      #nc-root select,
+      [class*="Select-control"],
+      [class*="DropdownList"] {
+        min-height: 36px !important;
+        height: 36px !important;
+        padding: 4px 10px !important;
+        font-size: 0.9rem !important;
+      }
+
+      /* Reduser høyden på tekstboksen (Short Summary) */
+      #nc-root textarea {
+        min-height: 75px !important;
+        height: 75px !important;
+        padding: 8px 10px !important;
+        font-size: 0.9rem !important;
+      }
+
+      /* Gjør etikettene (TITLE, LANGUAGE osv.) litt nettere */
+      [class*="FieldLabel"] {
+        font-size: 0.7rem !important;
+        padding: 2px 6px !important;
+      }
+
+      /* Stram inn filopplastingsboksene (Manual PDF / Audio) */
+      [class*="FileWidget"] {
+        padding: 8px 12px !important;
+        min-height: auto !important;
+      }
+      [class*="FileWidget"] button {
+        padding: 4px 10px !important;
+        font-size: 0.85rem !important;
+        margin-bottom: 4px !important;
+      }
+    </style>
   </head>
   <body>
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
     <script>
-      // Find the library title link by its visible text and apply inline styles directly
+      // Behold den store, fete overskriften i toppmenyen
       setInterval(() => {
         const links = document.querySelectorAll('a, span, button');
         links.forEach((el) => {
