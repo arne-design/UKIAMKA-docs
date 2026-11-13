@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
-    <title>UKIAMKA digital documents Library – ADMIN</title>
+    <title>UKIAMKA digital documents Library – Admin</title>
     <style>
       body {
         margin: 0;
@@ -18,14 +18,18 @@
         align-items: center;
         justify-content: space-between;
         border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-        position: relative;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 48px;
+        box-sizing: border-box;
         z-index: 1000;
       }
       .admin-banner h1 {
         margin: 0;
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         font-weight: 700;
-        letter-spacing: 0.01em;
         color: #ffffff !important;
       }
       .admin-banner a {
@@ -34,18 +38,22 @@
         font-size: 0.85rem;
         font-weight: 500;
       }
-      .admin-banner a:hover {
-        color: #ffffff !important;
-        text-decoration: underline;
+      /* Push Decap CMS below the fixed 48px header */
+      #nc-root {
+        margin-top: 48px;
+      }
+      #nc-root header {
+        top: 48px !important;
       }
     </style>
   </head>
   <body>
     <header class="admin-banner">
-      <h1>UKIAMKA digital documents Library – ADMIN</h1>
+      <h1>UKIAMKA digital documents Library</h1>
       <a href="/">← Back to public archive</a>
     </header>
 
+    <div id="nc-root"></div>
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
   </body>
 </html>
