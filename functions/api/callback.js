@@ -13,6 +13,11 @@ export async function onRequest(context) {
   });
 
   const result = await response.json();
+
+  if (result.error || !result.access_token) {
+    return new Response(`GitHub OAuth feil: ${JSON.stringify(result)}`, { status: 400 });
+  }
+
   const tokenData = JSON.stringify({
     token: result.access_token,
     provider: 'github',
