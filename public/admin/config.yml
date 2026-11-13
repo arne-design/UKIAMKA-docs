@@ -13,31 +13,32 @@ public_folder: "/filer"
 
 collections:
   - name: "kurs"
-    label: "Kurs og veiledninger"
+    label: "Trainings & Course"
     folder: "src/content/kurs"
     create: true
     slug: "{{language}}-{{slug}}"
     fields:
-      - { label: "Kurstittel", name: "title", widget: "string", required: true }
-      - label: "Språk"
+      - { label: "Title", name: "title", widget: "string", required: true }
+      - label: "Language"
         name: "language"
         widget: "select"
         options:
-          - { label: "Engelsk", value: "en" }
-          - { label: "Swahili", value: "sw" }
-          - { label: "Fransk", value: "fr" }
+          - { label: "Engelsk", value: "EN" }
+          - { label: "Swahili", value: "SW" }
+          - { label: "Amaric", value: "AM" }
+          - { label: "Fransk", value: "FR" }
         default: "en"
-      - label: "Kategori"
+      - label: "Category"
         name: "category"
         widget: "select"
         options:
-          - "Pastorer og eldste"
-          - "Ungdomsledere"
-          - "Søndagsskole"
-          - "Menighetsplanting"
-      - { label: "Kort sammendrag", name: "description", widget: "text" }
-      - { label: "Kurshefte (PDF)", name: "pdf_file", widget: "file", required: false }
-      - { label: "Lydopptak (MP3)", name: "audio_file", widget: "file", required: false }
-      - { label: "Filstørrelse (f.eks. 1,4 MB)", name: "file_size", widget: "string", required: false }
-      - { label: "Publiseringsdato", name: "date", widget: "datetime" }
-      - { label: "Kurstekst", name: "body", widget: "markdown", required: false }
+          - "Pastors & Leaders"
+          - "Youth leaders"
+          - "Sunday School"
+          - "Church Planting"
+      - { label: "Short Summary", name: "description", widget: "text" }
+      - { label: "Manual (PDF)", name: "pdf_file", widget: "file", required: false }
+      - { label: "Recording (MP3)", name: "audio_file", widget: "file", required: false }
+      - { label: "File size (f.eks. 1,4 MB)", name: "file_size", widget: "string", required: false }
+      - { label: "Publication date", name: "date", widget: "datetime" }
+      - { label: "Manual Text", name: "body", widget: "markdown", required: false }
