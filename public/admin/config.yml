@@ -27,7 +27,7 @@ collections:
           - { label: "Swahili", value: "SW" }
           - { label: "Amaric", value: "AM" }
           - { label: "Fransk", value: "FR" }
-        default: "en"
+        default: "EN"
       - label: "Category"
         name: "category"
         widget: "select"
