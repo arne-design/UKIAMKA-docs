@@ -5,52 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
     <title>UKIAMKA Digital documents Library – Admin</title>
-    <style>
-      /* Style the top navigation bar background */
-      #nc-root header,
-      [class*="AppHeader"] {
-        background-color: #1e3a8a !important;
-      }
-
-      /* Make top bar icons and text light so they contrast with the blue background */
-      #nc-root header button,
-      #nc-root header a,
-      [class*="AppHeader"] button,
-      [class*="AppHeader"] a {
-        color: #ffffff !important;
-      }
-
-      /* Center, enlarge, and bolden the main library title link */
-      a[href*="ukiamka-docs.pages.dev"] {
-        position: fixed !important;
-        top: 10px !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        font-size: 1.65rem !important;
-        font-weight: 800 !important;
-        letter-spacing: 0.02em !important;
-        color: #ffffff !important;
-        text-decoration: none !important;
-        white-space: nowrap !important;
-        z-index: 9999 !important;
-      }
-
-      a[href*="ukiamka-docs.pages.dev"]:hover {
-        text-decoration: underline !important;
-      }
-
-      /* Adjust for smaller screens so it never overlaps buttons */
-      @media (max-width: 900px) {
-        a[href*="ukiamka-docs.pages.dev"] {
-          position: static !important;
-          transform: none !important;
-          font-size: 1.15rem !important;
-          font-weight: 800 !important;
-        }
-      }
-    </style>
   </head>
   <body>
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <script>
+      // Find the library title link by its visible text and apply inline styles directly
+      setInterval(() => {
+        const links = document.querySelectorAll('a, span, button');
+        links.forEach((el) => {
+          if (
+            el.children.length === 0 &&
+            el.textContent &&
+            el.textContent.includes('UKIAMKA')
+          ) {
+            const target = el.closest('a') || el;
+            target.style.setProperty('position', 'fixed', 'important');
+            target.style.setProperty('top', '10px', 'important');
+            target.style.setProperty('left', '50%', 'important');
+            target.style.setProperty('transform', 'translateX(-50%)', 'important');
+            target.style.setProperty('font-size', '1.65rem', 'important');
+            target.style.setProperty('font-weight', '800', 'important');
+            target.style.setProperty('letter-spacing', '0.02em', 'important');
+            target.style.setProperty('color', '#1e3a8a', 'important');
+            target.style.setProperty('white-space', 'nowrap', 'important');
+            target.style.setProperty('z-index', '9999', 'important');
+          }
+        });
+      }, 300);
+    </script>
   </body>
 </html>
