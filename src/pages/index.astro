@@ -1,23 +1,30 @@
 ---
-const courseModules = import.meta.glob('../../src/content/kurs/*.md', { eager: true });
+const courseModules = import.meta.glob('../../src/content/courses/*.md', { eager: true });
 const allCourses = Object.values(courseModules);
 const courses = allCourses.sort((a: any, b: any) => 
   new Date(b.frontmatter?.date || 0).getTime() - new Date(a.frontmatter?.date || 0).getTime()
 );
 
 const langNames: Record<string, string> = {
-  en: 'Engelsk',
+  en: 'English',
   sw: 'Swahili',
-  fr: 'Fransk',
+  fr: 'French',
+};
+
+const catNames: Record<string, string> = {
+  'Pastorer og eldste': 'Pastors & Elders',
+  'Ungdomsledere': 'Youth Leaders',
+  'Søndagsskole': 'Sunday School',
+  'Menighetsplanting': 'Church Planting',
 };
 ---
 
 <!DOCTYPE html>
-<html lang="no">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UKIAMKA – Kurs- og undervisningsarkiv</title>
+  <title>UKIAMKA – Course & Teaching Archive</title>
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#1e3a8a" />
   <style>
@@ -47,37 +54,37 @@ const langNames: Record<string, string> = {
 </head>
 <body>
   <header>
-    <h1>UKIAMKA Kursarkiv</h1>
-    <p>Undervisningsmateriell tilgjengelig også uten internett</p>
+    <h1>UKIAMKA Course Archive</h1>
+    <p>Teaching resources available offline</p>
   </header>
 
   <main class="container">
     <div class="controls">
-      <input type="search" id="searchInput" placeholder="Søk etter kurs eller tema..." />
+      <input type="search" id="searchInput" placeholder="Search courses or topics..." />
       <select id="langFilter">
-        <option value="all">Alle språk</option>
-        <option value="en">Engelsk</option>
+        <option value="all">All Languages</option>
+        <option value="en">English</option>
         <option value="sw">Swahili</option>
-        <option value="fr">Fransk</option>
+        <option value="fr">French</option>
       </select>
       <select id="catFilter">
-        <option value="all">Alle kategorier</option>
-        <option value="Pastorer og eldste">Pastorer og eldste</option>
-        <option value="Ungdomsledere">Ungdomsledere</option>
-        <option value="Søndagsskole">Søndagsskole</option>
-        <option value="Menighetsplanting">Menighetsplanting</option>
+        <option value="all">All Categories</option>
+        <option value="Pastorer og eldste">Pastors & Elders</option>
+        <option value="Ungdomsledere">Youth Leaders</option>
+        <option value="Søndagsskole">Sunday School</option>
+        <option value="Menighetsplanting">Church Planting</option>
       </select>
     </div>
 
     <div class="status-bar">
-      <span id="countText">Viser {courses.length} kurs</span>
-      <span class="badge-offline">Klar for offline bruk</span>
+      <span id="countText">Showing {courses.length} {courses.length === 1 ? 'course' : 'courses'}</span>
+      <span class="badge-offline">Ready for offline use</span>
     </div>
 
     {courses.length === 0 ? (
       <div class="empty">
-        <h3>Ingen kurs er publisert ennå</h3>
-        <p style="margin-top: 0.5rem;">Logg inn på <strong>/admin/</strong> for å legge til det første kurset.</p>
+        <h3>No courses published yet</h3>
+        <p style="margin-top: 0.5rem;">Log in at <strong>/admin/</strong> to add the first course.</p>
       </div>
     ) : (
       <div class="grid" id="courseList">
@@ -86,6 +93,7 @@ const langNames: Record<string, string> = {
           const pdfUrl = (fm.pdf_file || '').replace(/^\/?public/, '');
           const audioUrl = (fm.audio_file || '').replace(/^\/?public/, '');
           const langLabel = langNames[fm.language] || fm.language;
+          const catLabel = catNames[fm.category] || fm.category;
 
           return (
             <article 
@@ -96,7 +104,7 @@ const langNames: Record<string, string> = {
             >
               <div class="meta">
                 {langLabel && <span>{langLabel}</span>}
-                {fm.category && <span>• {fm.category}</span>}
+                {catLabel && <span>• {catLabel}</span>}
                 {fm.file_size && <span>• {fm.file_size}</span>}
               </div>
               <h2>{fm.title}</h2>
@@ -112,16 +120,16 @@ const langNames: Record<string, string> = {
                 {pdfUrl && (
                   <>
                     <a href={pdfUrl} class="btn" target="_blank" rel="noopener">
-                      Les PDF
+                      Read PDF
                     </a>
                     <a href={pdfUrl} class="btn btn-secondary" download>
-                      Last ned PDF {fm.file_size ? `(${fm.file_size})` : ''}
+                      Download PDF {fm.file_size ? `(${fm.file_size})` : ''}
                     </a>
                   </>
                 )}
                 {audioUrl && (
                   <a href={audioUrl} class="btn btn-secondary" download>
-                    Last ned lyd (MP3)
+                    Download Audio (MP3)
                   </a>
                 )}
               </div>
@@ -160,7 +168,9 @@ const langNames: Record<string, string> = {
           card.style.display = 'none';
         }
       });
-      if (countText) countText.textContent = `Viser ${visible} kurs`;
+      if (countText) {
+        countText.textContent = `Showing ${visible} ${visible === 1 ? 'course' : 'courses'}`;
+      }
     }
 
     searchInput?.addEventListener('input', filterCourses);
