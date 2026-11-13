@@ -1,7 +1,7 @@
 {
-  "name": "UKIAMKA Kursarkiv",
+  "name": "UKIAMKA Teaching Library",
   "short_name": "UKIAMKA",
-  "description": "Digitalt kurs- og undervisningsarkiv for kirkenettverket",
+  "description": "Digital training and courses",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
