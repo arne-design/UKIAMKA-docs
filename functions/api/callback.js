@@ -17,7 +17,7 @@ export async function onRequest(context) {
     <script>
       const receiveMessage = (message) => {
         window.opener.postMessage(
-          'authorization:github:success:${JSON.stringify({ token: result.access_token, provider: 'github' })}',
+          'authorization:github:success:' + JSON.stringify({ token: result.access_token, provider: 'github' }),
           message.origin
         );
         window.removeEventListener("message", receiveMessage, false);
